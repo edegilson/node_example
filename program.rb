@@ -1,14 +1,17 @@
 require 'net/http'
 require 'json'
 
-uri = URI('http://localhost:3000/')
+uri = URI('http://localhost:3000/api/livro')
 
-usuariosJSON = Net::HTTP.get(uri)
+respostaPost = Net::HTTP.post_form(uri, 
+		'nome' => 'Mundo de Sofia', 
+		'autor' => 'Jostein Gaarder',
+		'quantidadePaginas' => 500)
 
-usuarios = JSON.parse usuariosJSON
+puts respostaPost.body
 
-usuarios.each do |index, value|
-	value.each do |usuario, nome|
-		puts "Nome: #{nome}"
-	end
-end
+uri = URI('http://localhost:3000/api/livros')
+
+respostaGet = Net::HTTP.get(uri)
+
+puts respostaGet

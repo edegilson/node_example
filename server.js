@@ -1,28 +1,44 @@
-var http = require('http');
+var express = require('express');
+var mongoose = require('mongoose');
+var dataBase = mongoose.createConnection('localhost', 'bookSearch');
 
-http.createServer(function(request, response) {
+var livroSchema = mongoose.Schema({
+	nome: String,
+	autor: String,
+	quantidadePaginas: Number
+});
 
-	var usuarios = {
-		"1" : {
-			nome: "Edegilson",
-			apelido: "Ed"
-		},
-		"2" : {
-			nome: "Luiz",
-			apelido: "Leiz"
-		},
-		"3" : {
-			nome: "Thiago",
-			apelido: "Rusty"
-		},
-		"4" : {
-			nome: "Neilton",
-			apelido: "Baiano"
-		}
-	};
+var livroModel = mongoose.model('livros', livroSchema);
 
-	response.writeHead(200, {'Content-Type' : 'application/json'});
+var app = express();
 
-	response.end(JSON.stringify(usuarios));
+app.configure(function() {
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(app.router);
+});
 
-}).listen(3000);
+app.get('/api/livros', function(request, response) {
+	console.log('efetuando busca..');
+	
+	livroModel.find({}, function(erro, livros){
+		response.send(livros);
+	});
+
+	console.log('ok');
+});
+
+app.post('/api/livro', function(request, response) {
+
+	var livro = new livroModel({
+		nome: request.body.nome,
+		autor: request.body.autor,
+		quantidadePaginas: request.body.quantidadePaginas
+	});
+
+	livro.save();
+
+	response.send(livro);
+});
+
+app.listen(3000);
