@@ -19,14 +19,14 @@ app.configure(function() {
 });
 
 app.get('/api/livros', function(request, response) {
-	
+
 	var livros = function(request, response){
-	    
+
 	    livroModel.find({}, function(err, livrosResult){
 	        response.send(livrosResult);
 	    });
 	};
-	
+
 });
 
 app.post('/api/livro', function(request, response) {
